@@ -1,0 +1,11 @@
+<rdf:rdf xmlns="http://projecthydra.org/ns/relations#">
+	<rdf:Description about="info:fedora/__DO_NOT_USE__/DC">
+		<isMetadataFor rdf:resource="info:fedora/__DO_NOT_USE__" xmlns="info:fedora/fedora-system:def/relations-external#"/>
+	</rdf:Description>
+	<rdf:Description about="info:fedora/__DO_NOT_USE__/RELS-EXT">
+		<asserts xmlns="http://projecthydra.org/ns/relations#">FOO</asserts>
+	</rdf:Description>
+	<rdf:Description about="info:fedora/__DO_NOT_USE__/RELS-INT">
+		<asserts xmlns="http://projecthydra.org/ns/relations#">BAR</asserts>
+	</rdf:Description>
+</rdf:rdf>
