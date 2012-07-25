@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["armintor@gmail.com"]
   s.homepage    = %q{https://github.com/cul/active_fedora_rels_int}
   s.summary     = %q{ActiveFedora library supporting RELS-INT datastreams}
-  s.description     = %q{ActiveFedora library to allow use of RELS-INT to track RDF assertions about datastreamsvia a similar api to the ActiveFedora RELS-EXT implementation}
+  s.description     = %q{ActiveFedora library to allow use of RELS-INT to track RDF assertions about datastreams via a similar api to the ActiveFedora RELS-EXT implementation}
 
   s.rubygems_version = %q{1.3.7}
 

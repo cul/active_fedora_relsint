@@ -1,10 +1,18 @@
 require 'active_support'
 module ActiveFedora
   module RelsInt
-    extend ActiveSupport::Autoload
-    eager_autoload do
-      autoload :Datastream
-      autoload :SemanticNode
+    extend ActiveSupport::Concern
+    autoload :Datastream, 'active_fedora_relsint/datastream'
+    included do
+      self.has_metadata :name=>"RELS-INT", :type=>ActiveFedora::RelsInt::Datastream
+    end
+    
+    def rels_int
+      if !datastreams.has_key?("RELS-INT")
+        ds = ActiveFedora::RelsInt::Datastream.new(@inner_object, "RELS-INT")
+        add_datastream(ds)
+      end
+      return datastreams["RELS-INT"]
     end
   end
 end
