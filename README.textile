@@ -1,0 +1,46 @@
+ActiveFedora::RelsInt
+
+A mixin for ActiveFedora to allow use and updating of the RELS-INT datastream.
+
+RELS-INT is similar to RELS-EXT: A shallow (depth = 1) XML serialization of a RDF graph.
+However, the subjects of triples in the RELS-INT graph are an object's datastreams.
+
+For example, consider a Fedora object with a PID of 'test:1' that hold a TIFF image in a datastream called 'content'.
+You may add various derivative images in additional datastreams, but feel that relying on encoded
+ datastream IDs is too fragile an approach to indicating their relationship to 'content'.  You may
+ indicate these relationships in a RELS-INT like the below:
+
+bc. <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <rdf:Description rdf:about="info:fedora/test:1/content">
+    <pixelXDimension xmlns="http://www.kanzaki.com/ns/exif#">2400</pixelXDimension>
+    <pixelYDimension xmlns="http://www.kanzaki.com/ns/exif#">1600</pixelYDimension>
+    <thumbnail xmlns="http://xmlns.com/foaf/0.1/" rdf:resource="info:fedora/test:1/ds1" />
+  </rdf:Description>
+  <rdf:Description rdf:about="info:fedora/test:1/ds1">
+  <pixelXDimension xmlns="http://www.kanzaki.com/ns/exif#">150</pixelXDimension>
+  <pixelYDimension xmlns="http://www.kanzaki.com/ns/exif#">100</pixelYDimension>
+  </rdf:Description>
+  <rdf:Description rdf:about="info:fedora/test:1/ds2">
+  <pixelXDimension xmlns="http://www.kanzaki.com/ns/exif#">1500</pixelXDimension>
+  <pixelYDimension xmlns="http://www.kanzaki.com/ns/exif#">1000</pixelYDimension>
+  </rdf:Description>
+</rdf:RDF>
+
+Then with a supporting ActiveFedora model:
+
+bc. class GenericImage < ActiveFedora::Base
+  include ActiveFedora::RelsInt
+end
+
+You can identify the thumbnail image by querying the RELS-INT graph:
+
+bc. my_obj = GenericImage.find('test:1')
+statement = my_obj.rels_int.relationships(my_obj.datastreams['content'],"http://xmlns.com/foaf/0.1/thumbnail").first
+unless statement.nil?
+  dsid = statement.object.to_s.split('/')[-1] # this will be a RDF::Statement
+  thumb_ds = my_obj.datastreams[dsid]
+end
+
+You can also add or delete statements to the RELS-INT graph as tested in spec/unit/relsint_spec.rb
+
+Note that the RELS-INT datastream is not able to monitor the object, so datastream deletions would require a seperate removal of the deleted datastreams subgraph in RELS-INT.
