@@ -36,7 +36,23 @@ describe ActiveFedora::RelsInt do
   
   describe ActiveFedora::RelsInt::Datastream do
     it "should load relationships from foxml into the appropriate graphs" do
-      pending "mocking the fcrepo responses"
+      test_relsint = fixture('rels_int_test.xml').read
+      inner = mock("DigitalObject")
+      inner.stubs(:pid).returns("test:relsint")
+      inner.stubs(:internal_uri).returns("info:fedora/test:relsint")
+      repo = mock("Repository")
+      profile_xml = fixture('rels_int_profile.xml').read
+      repo.expects(:datastream).with(:pid=>inner.pid,:dsid=>"RELS-INT").returns(profile_xml)
+      repo.expects(:datastream_dissemination).with(:pid=>inner.pid,:dsid=>"RELS-INT").returns(test_relsint)
+      repo.stubs(:config).returns({})
+      inner.stubs(:repository).returns(repo)
+      test_obj = ActiveFedora::RelsInt::Datastream.new(inner,"RELS-INT")
+      test_obj.changed?.should be_false
+      dc = ActiveFedora::Datastream.new(inner,"DC")
+      triples = test_obj.relationships(dc,:is_metadata_for)
+      e = ['info:fedora/test:relsint/DC','info:fedora/fedora-system:def/relations-external#isMetadataFor','info:fedora/test:relsint/RELS-INT'].
+        map {|x| RDF::URI.new(x)}
+      triples.should == [RDF::Statement.new(*e)]
     end
     it "should load relationships into appropriate graphs when assigned content" do
       test_relsint = fixture('rels_int_test.xml').read
@@ -45,6 +61,7 @@ describe ActiveFedora::RelsInt do
       inner.stubs(:internal_uri).returns("info:fedora/test:relsint")
       test_obj = ActiveFedora::RelsInt::Datastream.new(inner,"RELS-INT")
       test_obj.content=test_relsint
+      test_obj.changed?.should be_true
       dc = ActiveFedora::Datastream.new(inner,"DC")
       triples = test_obj.relationships(dc,:is_metadata_for)
       e = ['info:fedora/test:relsint/DC','info:fedora/fedora-system:def/relations-external#isMetadataFor','info:fedora/test:relsint/RELS-INT'].
@@ -63,6 +80,7 @@ describe ActiveFedora::RelsInt do
       test_obj.add_relationship(rels_ext,:asserts, "FOO", true)
       test_obj.add_relationship(test_obj,:asserts, "BAR", true)
       test_obj.serialize!
+      test_obj.changed?.should be_true
       puts test_obj.content
       Nokogiri::XML.parse(test_obj.content).should be_equivalent_to Nokogiri::XML.parse(test_relsint)
     end

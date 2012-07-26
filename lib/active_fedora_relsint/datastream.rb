@@ -7,6 +7,10 @@ module ActiveFedora
         changed_attributes.delete 'relationships'
       end
       
+      def relationships_will_change!
+        changed_attributes['relationships'] = nil
+      end
+      
       def content
         if self.new? and @content.nil?
           content=ActiveFedora::RelsInt::Datastream.xml_template
@@ -56,18 +60,18 @@ module ActiveFedora
       def add_relationship(datastream, predicate, target, literal=false)
         stmt = build_statement(datastream, predicate, target, literal)
         graph.insert(stmt) unless graph.has_statement? stmt
-        changed_attributes['relationships'] = nil
+        relationships_will_change!
       end
       
       def remove_relationship(datastream, predicate, target, literal=false)
         stmt = build_statement(datastream, predicate, target, literal)
         graph.delete(stmt)
-        changed_attributes['relationships'] = nil
+        relationships_will_change!
       end
       
       def clear_relationship(datastream, predicate)
         graph.delete [to_resource(datastream), predicate, nil]
-        changed_attributes['relationships'] = nil
+        relationships_will_change!
       end
       
       def relationships(*args)
@@ -88,6 +92,7 @@ module ActiveFedora
           g << stmt
         end
         self.relationships_loaded = true
+        changed_attributes.delete 'relationships'
         @graph = g
       end
       
