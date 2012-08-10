@@ -27,7 +27,7 @@ module ActiveFedora
       
       def to_resource(object, literal=false)
         if object.is_a? ActiveFedora::Datastream
-          RDF::URI.new(object.digital_object.internal_uri + '/' + object.dsid)
+          RDF::URI.new("info:fedora/#{object.pid}/#{object.dsid}")
         elsif object.respond_to? :internal_uri
           RDF::URI.new(object.internal_uri)
         elsif object.is_a? RDF::Resource
