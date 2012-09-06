@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubygems_version = %q{1.3.7}
 
-  s.add_dependency('active-fedora', '>=4.2.0')
+  s.add_dependency('active-fedora', '>=4.5.2')
   s.add_dependency("activesupport", '~>3.2.0')
   s.add_dependency("rubydora", '~>0.5.11')
   s.add_development_dependency("yard")

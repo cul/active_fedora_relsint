@@ -1,7 +1,11 @@
 module ActiveFedora
   module RelsInt
     class Datastream < ActiveFedora::Datastream
+      class_attribute :profile_solr_name
       attr_accessor :relationships_loaded
+      
+      self.profile_solr_name = ActiveFedora::SolrService.solr_name("rels_int_profile", :string, :displayable)
+      
       def serialize!
         self.content = to_rels_int() if changed_attributes.include? 'relationships'
         changed_attributes.delete 'relationships'
@@ -110,6 +114,30 @@ module ActiveFedora
       
       def self.xml_template
         "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"></rdf:RDF>"
+      end
+      
+      def to_solr(solr_doc=Hash.new)
+        result = super(solr_doc)
+        result = solrize_relationships(result)
+        result
+      end
+      
+      def from_solr(solr_doc)
+        @solr_hash = JSON.parse(solr_doc[self.class.profile_solr_name][0])
+      end
+      
+      def solrize_relationships(solr_doc=Hash.new)
+        rel_hash = {} # the rels_int_profile is a hash of hashes in json
+        graph.each_statement do |statement|
+          predicate = ActiveFedora::RelsExtDatastream.short_predicate(statement.predicate)
+          literal = statement.object.kind_of?(RDF::Literal)
+          val = literal ? statement.object.value : statement.object.to_str
+          rel_hash[statement.subject] ||= {}
+          rel_hash[statement.subject][predicate] ||= []
+          rel_hash[statement.subject][predicate] << val
+        end
+        solr_doc[self.class.profile_solr_name] = rel_hash.to_json unless rel_hash.blank?
+        solr_doc
       end
     end
   end
