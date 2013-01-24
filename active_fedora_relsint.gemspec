@@ -14,14 +14,15 @@ Gem::Specification.new do |s|
 
   s.rubygems_version = %q{1.3.7}
 
-  s.add_dependency('active-fedora', '>=4.5.2')
+  s.add_dependency('active-fedora', '~>5.0')
   s.add_dependency("activesupport", '~>3.2.0')
-  s.add_dependency("rubydora", '~>0.5.11')
+  s.add_dependency("rubydora", '~>1.2.0')
   s.add_development_dependency("yard")
   s.add_development_dependency("RedCloth") # for RDoc formatting
   s.add_development_dependency("rake")
   s.add_development_dependency("rspec", ">= 2.9.0")
   s.add_development_dependency("mocha", "0.10.5")
+  s.add_development_dependency("loggable")
   
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec}/*`.split("\n")
