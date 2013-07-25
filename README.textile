@@ -1,6 +1,5 @@
 h1. ActiveFedora::RelsInt
-!https://travis-ci.org/projecthydra/active_fedora_relsint.png?branch=master!:https://travis-ci.org/projecthydra/active_fedora_relsint
-
+!https://travis-ci.org/projecthydra/active_fedora_relsint.png?branch=master!:https://travis-ci.org/projecthydra/active_fedora_relsint !https://badge.fury.io/rb/active_fedora_relsint.png!:http://badge.fury.io/rb/active_fedora_relsint
 A mixin for ActiveFedora to allow use and updating of the RELS-INT datastream.
 
 RELS-INT is similar to RELS-EXT: A shallow (depth = 1) XML serialization of a RDF graph.
