@@ -1,4 +1,5 @@
 ActiveFedora::RelsInt
+!https://travis-ci.org/projecthydra/active_fedora_relsint.png?branch=master!:https://travis-ci.org/projecthydra/active_fedora_relsint
 
 A mixin for ActiveFedora to allow use and updating of the RELS-INT datastream.
 
