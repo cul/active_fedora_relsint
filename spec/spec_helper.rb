@@ -24,7 +24,6 @@ end
 restore_spec_configuration
 
 RSpec.configure do |config|
-  config.mock_with :mocha
   config.color_enabled = true
 end
 

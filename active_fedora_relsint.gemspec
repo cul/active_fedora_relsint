@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency("RedCloth") # for RDoc formatting
   s.add_development_dependency("rake")
   s.add_development_dependency("rspec", ">= 2.9.0")
-  s.add_development_dependency("mocha", "0.10.5")
   s.add_development_dependency("loggable")
   
   s.files         = `git ls-files`.split("\n")

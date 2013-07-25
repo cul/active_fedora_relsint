@@ -25,25 +25,25 @@ describe ActiveFedora::RelsInt do
 
   it "should serialize to appropriate RDF-XML on a new object" do
     blank_relsint = fixture('rels_int_blank.xml').read
-    inner = mock("DigitalObject")
-    inner.stubs(:new?).returns(true)
-    inner.stubs(:pid).returns("test:relsint")
-    repo = mock("Repository")
-    inner.stubs(:repository).returns(repo)
+    inner = double("DigitalObject")
+    inner.stub(:new?).and_return(true)
+    inner.stub(:pid).and_return("test:relsint")
+    repo = double("Repository")
+    inner.stub(:repository).and_return(repo)
     test_obj = ActiveFedora::RelsInt::Datastream.new(inner,"RELS-INT")
     Nokogiri::XML.parse(test_obj.content).should be_equivalent_to Nokogiri::XML.parse(blank_relsint)
   end
   
   it "should serialize to appropriate RDF-XML when added to an existing obect" do
     blank_relsint = fixture('rels_int_blank.xml').read
-    inner = mock("DigitalObject")
-    inner.stubs(:new?).returns(false)
-    inner.stubs(:pid).returns("test:relsint")
-    repo = mock("Repository")
+    inner = double("DigitalObject")
+    inner.stub(:new?).and_return(false)
+    inner.stub(:pid).and_return("test:relsint")
+    repo = double("Repository")
     # new datastream, no profile
-    repo.expects(:datastream).with(:pid=>inner.pid,:dsid=>"RELS-INT").returns(nil)
-    repo.expects(:config).returns({})
-    inner.stubs(:repository).returns(repo)
+    repo.should_receive(:datastream).with(:pid=>inner.pid,:dsid=>"RELS-INT").and_return(nil)
+    repo.should_receive(:config).and_return({})
+    inner.stub(:repository).and_return(repo)
     test_obj = ActiveFedora::RelsInt::Datastream.new(inner,"RELS-INT")
     Nokogiri::XML.parse(test_obj.content).should be_equivalent_to Nokogiri::XML.parse(blank_relsint)
   end
@@ -51,16 +51,16 @@ describe ActiveFedora::RelsInt do
   describe ActiveFedora::RelsInt::Datastream do
     before :each do
       @test_relsint = fixture('rels_int_test.xml').read
-      @inner = mock("DigitalObject")
-      @inner.stubs(:new?).returns(false)
-      @inner.stubs(:pid).returns("test:relsint")
-      @inner.stubs(:internal_uri).returns("info:fedora/test:relsint")
-      repo = mock("Repository")
+      @inner = double("DigitalObject")
+      @inner.stub(:new?).and_return(false)
+      @inner.stub(:pid).and_return("test:relsint")
+      @inner.stub(:internal_uri).and_return("info:fedora/test:relsint")
+      repo = double("Repository")
       profile_xml = fixture('rels_int_profile.xml').read
-      repo.expects(:datastream).with(:pid=>@inner.pid,:dsid=>"RELS-INT").returns(profile_xml)
-      repo.stubs(:datastream_dissemination).with(:pid=>@inner.pid,:dsid=>"RELS-INT").returns(@test_relsint)
-      repo.stubs(:config).returns({})
-      @inner.stubs(:repository).returns(repo)
+      repo.should_receive(:datastream).with(:pid=>@inner.pid,:dsid=>"RELS-INT").and_return(profile_xml)
+      repo.stub(:datastream_dissemination).with(:pid=>@inner.pid,:dsid=>"RELS-INT").and_return(@test_relsint)
+      repo.stub(:config).and_return({})
+      @inner.stub(:repository).and_return(repo)
     end
     it "should load relationships from foxml into the appropriate graphs" do
       test_obj = ActiveFedora::RelsInt::Datastream.new(@inner,"RELS-INT")
@@ -73,9 +73,9 @@ describe ActiveFedora::RelsInt do
     end
     it "should load relationships into appropriate graphs when assigned content" do
       #test_relsint = fixture('rels_int_test.xml').read
-      #inner = mock("DigitalObject")
-      #inner.stubs(:pid).returns("test:relsint")
-      #inner.stubs(:internal_uri).returns("info:fedora/test:relsint")
+      #inner = double("DigitalObject")
+      #inner.stub(:pid).and_return("test:relsint")
+      #inner.stub(:internal_uri).and_return("info:fedora/test:relsint")
       test_obj = ActiveFedora::RelsInt::Datastream.new(@inner,"RELS-INT")
       test_obj.content=@test_relsint
       test_obj.changed?.should be_true
@@ -87,9 +87,9 @@ describe ActiveFedora::RelsInt do
     end    
     it "should propagate relationship changes to the appropriate graph in RELS-INT" do
       #test_relsint = fixture('rels_int_test.xml').read
-      #inner = mock("DigitalObject")
-      #inner.stubs(:pid).returns("test:relsint")
-      #inner.stubs(:internal_uri).returns("info:fedora/test:relsint")
+      #inner = double("DigitalObject")
+      #inner.stub(:pid).and_return("test:relsint")
+      #inner.stub(:internal_uri).and_return("info:fedora/test:relsint")
       test_obj = ActiveFedora::RelsInt::Datastream.new(@inner,"RELS-INT")
       dc = ActiveFedora::Datastream.new(@inner,"DC")
       rels_ext = ActiveFedora::Datastream.new(@inner,"RELS-EXT")
