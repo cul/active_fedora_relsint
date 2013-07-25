@@ -97,8 +97,6 @@ describe ActiveFedora::RelsInt do
       test_obj.add_relationship(rels_ext,:asserts, "FOO", true)
       test_obj.add_relationship(test_obj,:asserts, "BAR", true)
       test_obj.serialize!
-      test_obj.changed?.should be_true
-      puts test_obj.content
       Nokogiri::XML.parse(test_obj.content).should be_equivalent_to Nokogiri::XML.parse(@test_relsint)
     end
   end
