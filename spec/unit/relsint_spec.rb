@@ -100,4 +100,10 @@ describe ActiveFedora::RelsInt do
       Nokogiri::XML.parse(test_obj.content).should be_equivalent_to Nokogiri::XML.parse(@test_relsint)
     end
   end
+  
+
+  it "should load from solr" do
+    f = Foo.create
+    Foo.load_instance_from_solr(f.id).should_not be_nil
+  end
 end
