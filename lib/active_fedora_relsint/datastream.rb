@@ -123,7 +123,9 @@ module ActiveFedora
       end
       
       def from_solr(solr_doc)
-        @solr_hash = JSON.parse(solr_doc[self.class.profile_solr_name][0])
+        predicate_symbol = self.profile_solr_name
+        value = (solr_doc[predicate_symbol].nil? ? solr_doc[predicate_symbol.to_s]: solr_doc[predicate_symbol])
+        @solr_hash = value.blank? ? nil : JSON.parse(value[0])
       end
       
       def solrize_relationships(solr_doc=Hash.new)
