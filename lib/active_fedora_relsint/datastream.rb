@@ -131,7 +131,7 @@ module ActiveFedora
       def solrize_relationships(solr_doc=Hash.new)
         rel_hash = {} # the rels_int_profile is a hash of hashes in json
         graph.each_statement do |statement|
-          predicate = ActiveFedora::RelsExtDatastream.short_predicate(statement.predicate)
+          predicate = Predicates.short_predicate(statement.predicate)
           literal = statement.object.kind_of?(RDF::Literal)
           val = literal ? statement.object.value : statement.object.to_str
           rel_hash[statement.subject] ||= {}

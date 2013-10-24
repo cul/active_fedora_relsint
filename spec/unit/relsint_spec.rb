@@ -99,6 +99,12 @@ describe ActiveFedora::RelsInt do
       test_obj.serialize!
       Nokogiri::XML.parse(test_obj.content).should be_equivalent_to Nokogiri::XML.parse(@test_relsint)
     end
+    it "should run to_solr" do
+      test_obj = ActiveFedora::RelsInt::Datastream.new(@inner,"RELS-INT")
+      test_obj.content=@test_relsint
+      test_obj.changed?.should be_true
+      expect{test_obj.to_solr}.to_not raise_error
+    end
   end
   
 
