@@ -1,7 +1,9 @@
+# -*- encoding : utf-8 -*-
 require 'active_support'
 module ActiveFedora
   module RelsInt
     extend ActiveSupport::Concern
+    autoload :RDFXMLWriter, 'active_fedora_relsint/rdf_xml_writer'
     autoload :Datastream, 'active_fedora_relsint/datastream'
     included do
       self.has_metadata :name=>"RELS-INT", :type=>ActiveFedora::RelsInt::Datastream

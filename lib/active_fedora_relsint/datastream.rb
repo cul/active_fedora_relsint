@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module ActiveFedora
   module RelsInt
     class Datastream < ActiveFedora::Datastream
@@ -105,9 +106,11 @@ module ActiveFedora
       end
       
       def to_rels_int
-        xml = ActiveFedora::RDFXMLWriter.buffer(:max_depth=>1) do |writer|
-          writer.prefixes.merge! ActiveFedora::Predicates.predicate_namespaces
-          writer.write_graph(graph)
+        xml = ActiveFedora::RelsInt::RDFXMLWriter.buffer(:max_depth=>1) do |writer|
+          #writer.prefixes.merge! ActiveFedora::Predicates.predicate_namespaces
+          graph.each_statement do |statement|
+            writer << statement
+          end
         end
         xml
       end
@@ -140,6 +143,11 @@ module ActiveFedora
         end
         solr_doc[self.class.profile_solr_name] = rel_hash.to_json unless rel_hash.blank?
         solr_doc
+      end
+      class UriObject
+        def initialize(resource)
+          @resource = resource
+        end
       end
     end
   end
