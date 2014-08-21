@@ -105,6 +105,16 @@ describe ActiveFedora::RelsInt do
       test_obj.serialize!
       expect(Nokogiri::XML.parse(test_obj.content)).to be_equivalent_to Nokogiri::XML.parse(@test_relsint)
     end
+    it "should clear matching relationships selectively" do
+      test_obj = ActiveFedora::RelsInt::Datastream.new(@inner,"RELS-INT")
+      test_obj.content=@test_relsint
+      rels_ext = ActiveFedora::Datastream.new(@inner,"RELS-EXT")
+      test_pred = 'http://projecthydra.org/ns/relations#asserts'
+      expect(test_obj.relationships(rels_ext,:asserts)).to_not be_empty
+      test_obj.clear_relationship('info:fedora/test:relsint/RELS-EXT',:asserts)
+      expect(test_obj.relationships(rels_ext,:asserts)).to be_empty
+      expect(test_obj.relationships(test_obj,:asserts)).to_not be_empty
+    end
     it "should run to_solr" do
       test_obj = ActiveFedora::RelsInt::Datastream.new(@inner,"RELS-INT")
       test_obj.content=@test_relsint

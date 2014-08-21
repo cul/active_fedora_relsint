@@ -75,7 +75,7 @@ module ActiveFedora
       end
       
       def clear_relationship(datastream, predicate)
-        graph.delete [to_resource(datastream), predicate, nil]
+        graph.delete [to_resource(datastream), to_predicate(predicate), nil]
         relationships_will_change!
       end
       
