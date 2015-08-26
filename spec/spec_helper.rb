@@ -1,12 +1,12 @@
 ENV["environment"] ||= 'test'
 require "bundler/setup"
 
-if ENV['COVERAGE'] and RUBY_VERSION =~ /^1.9/
+begin
   require 'simplecov'
-  require 'simplecov-rcov'
-
-  SimpleCov.formatter = SimpleCov::Formatter::RcovFormatter
   SimpleCov.start
+rescue LoadError
+  # as per active_fedora, we will not worry about lacking simplecov
+  $stderr.puts "Couldn't load simplecov"
 end
 
 require 'active-fedora'
