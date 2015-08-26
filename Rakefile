@@ -15,4 +15,4 @@ task :spec => ['active_fedora_relsint:rspec']
 task :rcov => ['active_fedora_relsint:rcov']
 
 
-task :default => [:spec]
+task :default => [:ci]
