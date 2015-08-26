@@ -13,6 +13,11 @@ require 'active-fedora'
 require 'active_fedora_relsint'
 require 'rspec'
 require 'equivalent-xml/rspec_matchers'
+require 'logger'
+require 'loggable'
+
+include Loggable
+
 logger.level = Logger::WARN if logger.respond_to? :level ###MediaShelf StubLogger doesn't have a level= method
 $VERBOSE=nil
 
