@@ -1,5 +1,7 @@
 APP_ROOT = File.expand_path("#{File.dirname(__FILE__)}/../../")
-
+require 'jettywrapper'
+JETTY_ZIP_BASENAME = '7.x-stable'
+Jettywrapper.url = "https://github.com/projecthydra/hydra-jetty/archive/#{JETTY_ZIP_BASENAME}.zip"
 namespace :active_fedora_relsint do
   require 'active-fedora'
 
@@ -43,4 +45,14 @@ task :coverage do
   Rake::Task["active_fedora_relsint:rspec"].invoke
 end
 
+end
+
+desc "CI build"
+task ci: 'jetty:unzip' do
+  ENV['environment'] = "test"
+  jetty_params = Jettywrapper.load_config
+  error = Jettywrapper.wrap(jetty_params) do
+    Rake::Task['active_fedora_relsint:coverage'].invoke
+  end
+  raise "test failures: #{error}" if error
 end

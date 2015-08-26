@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ActiveFedora::RelsInt do
+describe ActiveFedora::RelsInt, type: :unit do
   before :all do
     class Foo < ActiveFedora::Base
       include ActiveFedora::RelsInt
@@ -123,9 +123,4 @@ describe ActiveFedora::RelsInt do
     end
   end
   
-
-  pending "should load from solr" do
-    f = Foo.create
-    Foo.load_instance_from_solr(f.id).should_not be_nil
-  end
 end
