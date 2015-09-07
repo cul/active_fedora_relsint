@@ -113,6 +113,17 @@ describe ActiveFedora::RelsInt, type: :unit do
       expect(datastream.changed?).to be(true)
       expect{datastream.to_solr}.to_not raise_error
     end
+    describe "#to_resource" do
+      # FCRepo 3.x only supports RDF::XSD.int, RDF::XSD.long, but RDF uses the RDF::XSD.integer supertype
+      {
+        0 => RDF::XSD.int, 32767 => RDF::XSD.int, -32768 => RDF::XSD.int,
+        2147483647 => RDF::XSD.int, -2147483648 => RDF::XSD.int,
+        2147483648 => RDF::XSD.long, -2147483649 => RDF::XSD.long
+      }.each do |value, datatype|
+        it "should assign implicit datatypes to #{value.class.name} valid for FCRepo 3" do
+          expect(datastream.to_resource(value,true).datatype).to eql(datatype)
+        end
+      end
+    end
   end
-  
 end

@@ -2,6 +2,7 @@
 module ActiveFedora
   module RelsInt
     class Datastream < ActiveFedora::Datastream
+      XSD_INT_BITLENGTH = 31
       class_attribute :profile_solr_name
       attr_accessor :relationships_loaded
       
@@ -38,7 +39,11 @@ module ActiveFedora
         elsif object.is_a? RDF::Resource
           object
         elsif literal
-          RDF::Literal.new(object)
+          result = RDF::Literal.new(object)
+          if result.datatype.eql?(RDF::XSD.integer) # invalid for FCRepo 3
+            result.datatype = (result.object.bit_length > XSD_INT_BITLENGTH ? RDF::XSD.long : RDF::XSD.int)
+          end
+          result
         else
           RDF::URI.new(object.to_s)
         end
