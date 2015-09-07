@@ -40,8 +40,17 @@ module ActiveFedora
           object
         elsif literal
           result = RDF::Literal.new(object)
-          if result.datatype.eql?(RDF::XSD.integer) # invalid for FCRepo 3
+          case # invalid datatypes for FCRepo 3
+          when result.datatype.eql?(RDF::XSD.integer)
             result.datatype = (signed_bit_length(result.object) > XSD_INT_BITLENGTH ? RDF::XSD.long : RDF::XSD.int)
+          when result.datatype.eql?(RDF::XSD.decimal)
+            result.datatype = RDF::XSD.double
+          when result.datatype.eql?(RDF::XSD.boolean)
+            result.datatype = nil
+          when result.datatype.eql?(RDF::XSD.date)
+            result = RDF::Literal.new(object.to_datetime)
+          when result.datatype.eql?(RDF::XSD.time)
+            result = RDF::Literal.new(object.to_datetime)
           end
           result
         else
