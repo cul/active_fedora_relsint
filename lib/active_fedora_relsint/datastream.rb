@@ -41,7 +41,7 @@ module ActiveFedora
         elsif literal
           result = RDF::Literal.new(object)
           if result.datatype.eql?(RDF::XSD.integer) # invalid for FCRepo 3
-            result.datatype = (result.object.bit_length > XSD_INT_BITLENGTH ? RDF::XSD.long : RDF::XSD.int)
+            result.datatype = (signed_bit_length(result.object) > XSD_INT_BITLENGTH ? RDF::XSD.long : RDF::XSD.int)
           end
           result
         else
@@ -152,6 +152,14 @@ module ActiveFedora
       class UriObject
         def initialize(resource)
           @resource = resource
+        end
+      end
+      private
+      def signed_bit_length(num)
+        if num.respond_to? :bit_length
+          num.bit_length
+        else # in MRI 1.9.x, we need to implement the two complement bitlength
+          Math.log2(num < 0 ? num.abs : num+1).ceil
         end
       end
     end
