@@ -33,28 +33,28 @@ module ActiveFedora
       
       def to_resource(object, literal=false)
         if object.is_a? ActiveFedora::Datastream
-          RDF::URI.new("info:fedora/#{object.pid}/#{object.dsid}")
+          ::RDF::URI.new("info:fedora/#{object.pid}/#{object.dsid}")
         elsif object.respond_to? :internal_uri
-          RDF::URI.new(object.internal_uri)
-        elsif object.is_a? RDF::Resource
+          ::RDF::URI.new(object.internal_uri)
+        elsif object.is_a? ::RDF::Resource
           object
         elsif literal
-          result = RDF::Literal.new(object)
+          result = ::RDF::Literal.new(object)
           case # invalid datatypes for FCRepo 3
-          when result.datatype.eql?(RDF::XSD.integer)
-            result.datatype = (signed_bit_length(result.object) > XSD_INT_BITLENGTH ? RDF::XSD.long : RDF::XSD.int)
-          when result.datatype.eql?(RDF::XSD.decimal)
-            result.datatype = RDF::XSD.double
-          when result.datatype.eql?(RDF::XSD.boolean)
+          when result.datatype.eql?(::RDF::XSD.integer)
+            result.datatype = (signed_bit_length(result.object) > XSD_INT_BITLENGTH ? ::RDF::XSD.long : ::RDF::XSD.int)
+          when result.datatype.eql?(::RDF::XSD.decimal)
+            result.datatype = ::RDF::XSD.double
+          when result.datatype.eql?(::RDF::XSD.boolean)
             result.datatype = nil
-          when result.datatype.eql?(RDF::XSD.date)
-            result = RDF::Literal.new(object.to_datetime)
-          when result.datatype.eql?(RDF::XSD.time)
-            result = RDF::Literal.new(object.to_datetime)
+          when result.datatype.eql?(::RDF::XSD.date)
+            result = ::RDF::Literal.new(object.to_datetime)
+          when result.datatype.eql?(::RDF::XSD.time)
+            result = ::RDF::Literal.new(object.to_datetime)
           end
           result
         else
-          RDF::URI.new(object.to_s)
+          ::RDF::URI.new(object.to_s)
         end
       end
       
@@ -62,10 +62,10 @@ module ActiveFedora
         return :p if arg.nil?
         if arg.is_a? Symbol
           arg = ActiveFedora::Predicates.find_graph_predicate(arg)
-        elsif arg.is_a? RDF::Resource
+        elsif arg.is_a? ::RDF::Resource
           arg
         else
-          RDF::URI.new(arg.to_s)
+          ::RDF::URI.new(arg.to_s)
         end
       end
       
@@ -73,7 +73,7 @@ module ActiveFedora
         subject = to_resource(datastream)
         predicate = to_predicate(predicate)
         object = to_resource(object,literal)
-        RDF::Statement.new(subject,predicate,object)
+        ::RDF::Statement.new(subject,predicate,object)
       end
       
       def add_relationship(datastream, predicate, target, literal=false)
@@ -95,19 +95,19 @@ module ActiveFedora
       
       def relationships(*args)
         q_args = args.empty? ? [:s, :p, :o] : [to_resource(args.first), to_predicate(args[1]), (args[2] || :o)]
-        query = RDF::Query.new do |query|
+        query = ::RDF::Query.new do |query|
           query << q_args
         end
         query.execute(graph).map(&:to_hash).map do |hash|
           stmt = q_args.map {|k| hash[k] || k}
-          RDF::Statement.new(*stmt)
+          ::RDF::Statement.new(*stmt)
         end
       end
       
       def load_relationships
         # load from content
-        g = RDF::Graph.new
-        RDF::RDFXML::Reader.new(content).each do |stmt|
+        g = ::RDF::Graph.new
+        ::RDF::RDFXML::Reader.new(content).each do |stmt|
           g << stmt
         end
         self.relationships_loaded = true
@@ -149,7 +149,7 @@ module ActiveFedora
         rel_hash = {} # the rels_int_profile is a hash of hashes in json
         graph.each_statement do |statement|
           predicate = Predicates.short_predicate(statement.predicate)
-          literal = statement.object.kind_of?(RDF::Literal)
+          literal = statement.object.kind_of?(::RDF::Literal)
           val = literal ? statement.object.value : statement.object.to_str
           rel_hash[statement.subject] ||= {}
           rel_hash[statement.subject][predicate] ||= []
